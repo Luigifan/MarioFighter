@@ -1,6 +1,7 @@
 package com.mikesantiago.mariofighter;
 
 import static com.mikesantiago.mariofighter.GlobalVariables.batch;
+import static com.mikesantiago.mariofighter.GlobalVariables.backgroundcam;
 import static com.mikesantiago.mariofighter.GlobalVariables.manager;
 import static com.mikesantiago.mariofighter.GlobalVariables.stateManager;
 import static com.mikesantiago.mariofighter.GlobalVariables.maincamera;
@@ -46,6 +47,12 @@ public class MainGameClass extends ApplicationAdapter
 		hudcam.zoom = 32f;
 		hudcam.position.set(new Vector3(10 * 32, 7 * 32, 0));
 		hudcam.update();
+		
+		backgroundcam = new OrthographicCamera(20, 15);
+		backgroundcam.translate(20, 15);
+		backgroundcam.zoom = 32f;
+		backgroundcam.position.set(new Vector3(10 * 32, 7 * 32, 0));
+		backgroundcam.update();
 	}
 	
 	public void update()

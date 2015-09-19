@@ -2,6 +2,7 @@ package com.mikesantiago.mariofighter.states;
 
 import static com.mikesantiago.mariofighter.GlobalVariables.PPM;
 import static com.mikesantiago.mariofighter.GlobalVariables.maincamera;
+import static com.mikesantiago.mariofighter.GlobalVariables.backgroundcam;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
@@ -87,18 +88,31 @@ public class TestState
 		if(Gdx.input.isKeyPressed(Keys.RIGHT))
 		{
 			Vector3 newPos = maincamera.position;
+			Vector3 newBgPos = maincamera.position;
 			newPos.x += 8;
 			maincamera.position.set(newPos);
 			maincamera.update();
+			
+			
+			bgOffset -= 2;
+			backgroundcam.position.set(newBgPos);
+			backgroundcam.update();
 		}
 		else if(Gdx.input.isKeyPressed(Keys.LEFT))
 		{
 			Vector3 newPos = maincamera.position;
+			Vector3 newBgPos = maincamera.position;
 			newPos.x -= 8;
 			maincamera.position.set(newPos);
 			maincamera.update();
+			
+			bgOffset += 2;
+			backgroundcam.position.set(newBgPos);
+			backgroundcam.update();
 		}
 	}
+	
+	private int bgOffset = 0;
 	
 	public void render(SpriteBatch sb)
 	{
@@ -106,14 +120,29 @@ public class TestState
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		sb.begin();
 		
-		sb.draw(GlobalVariables.manager.GetTexture("castle_bg"), 0, 0);
 		
-		tmr.setView(maincamera);
-		tmr.render();
+		//Pre world render stuff like backgrounds
+		{
+			Texture bgTexture = GlobalVariables.manager.GetTexture("castle_bg");
+			tmr.setView(backgroundcam);
+			if(!tmr.getBatch().isDrawing())
+				tmr.getBatch().begin();
+			tmr.getBatch().draw(bgTexture, 
+					(backgroundcam.position.x - (GlobalVariables.V_WIDTH / 2) + bgOffset) - 200, 
+					(backgroundcam.position.y - (GlobalVariables.V_HEIGHT / 2)) - 200, 
+					bgTexture.getWidth() * 1.5f, 
+					bgTexture.getHeight() * 1.5f);
+			if(tmr.getBatch().isDrawing())
+				tmr.getBatch().end();
+		}
 		
-		b2dr.render(world, b2dcam.combined);
-		
-		manager.GetFont().draw(sb, "top kek", 32, 32);
+		//misc render stuffs
+		{
+			tmr.setView(maincamera);
+			tmr.render();
+			b2dr.render(world, b2dcam.combined);
+			manager.GetFont().draw(sb, "top kek", 32, 32);
+		}
 		sb.end();
 	}
 

@@ -20,4 +20,5 @@ public class GlobalVariables
 	
 	public static OrthographicCamera maincamera;
 	public static OrthographicCamera hudcam;
+	public static OrthographicCamera backgroundcam;
 }
