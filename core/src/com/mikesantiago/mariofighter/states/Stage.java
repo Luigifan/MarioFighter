@@ -10,14 +10,24 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.badlogic.gdx.physics.box2d.ChainShape;
+import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
+import com.mikesantiago.mariofighter.CustomContactListener;
 import com.mikesantiago.mariofighter.GlobalVariables;
 public class Stage 
 {
@@ -34,10 +44,14 @@ public class Stage
 	
 	private String mapPath;
 	
+	public OrthographicCamera getB2Dcam(){return b2dcam;}
+	public void setB2dcam(OrthographicCamera cam){b2dcam = cam;}
+	
 	public Stage(String pathToMap)
 	{
 		mapPath = pathToMap;
 		world = new World(new Vector2(0, -9.81f), true);
+		world.setContactListener(new CustomContactListener());
 		b2dr = new Box2DDebugRenderer();
 		
 		b2dcam = new OrthographicCamera();
@@ -55,6 +69,7 @@ public class Stage
 		
 		String pathToBackground = tmr.getMap().getProperties().get("background").toString();
 		SetupBgTexture(pathToBackground);
+		BuildBox2DBodies();
 	}
 	
 	private void GetMapSizes()
@@ -86,6 +101,53 @@ public class Stage
 		System.out.println("Background texture is " + bgTexture.getWidth() + " x " + bgTexture.getHeight());
 	}
 	
+	private void BuildPlayerOne()
+	{
+		
+	}
+	
+	private void BuildBox2DBodies()
+	{
+		TiledMapTileLayer floorLayer = (TiledMapTileLayer)tileMap.getLayers().get("floor");
+		
+		BodyDef bdef = new BodyDef();
+		Body body;
+		FixtureDef fdef = new FixtureDef();
+		Fixture fixture;
+		
+		ChainShape shapeDef = new ChainShape();
+		
+		for(int row = 0; row < floorLayer.getHeight(); row++)
+		{
+			for(int col = 0; col < floorLayer.getWidth(); col++)
+			{
+				Cell cell = floorLayer.getCell(col, row);
+				if(cell == null) continue;
+				if(cell.getTile() == null) continue;
+				
+				//create body + fixture from cell
+				bdef = new BodyDef();
+				bdef.type = BodyType.StaticBody;
+				bdef.position.set(((col + .5f) * 32f) / PPM, ((row + .5f) * 32f) / PPM);
+				
+				Vector2[] v = new Vector2[4];
+				v[0] = new Vector2(-32f / 2 / PPM, -32f / 2 / PPM); //bot left
+				v[1] = new Vector2(-32f / 2 / PPM, 32f / 2 / PPM); //top left
+				v[2] = new Vector2(32f / 2 / PPM, 32f / 2 / PPM); //top right
+				v[3] = new Vector2(32f / 2 / PPM, -32f / 2 / PPM); //bot right
+				shapeDef = new ChainShape();
+				shapeDef.createChain(v);
+				fdef.friction = 0;
+				fdef.shape = shapeDef;
+				fdef.filter.categoryBits = GlobalVariables.GROUND_BIT; //type it is
+				fdef.filter.maskBits = GlobalVariables.PLAYER_BIT; //types allowed to collide with; use | to specify multiple
+				fdef.isSensor = false;
+				
+				world.createBody(bdef).createFixture(fdef);
+			}
+		}
+	}
+	
 	public void update()
 	{	
 		world.step(1 / 60f, 6, 2);
@@ -115,6 +177,7 @@ public class Stage
 		{
 			tmr.setView(GlobalVariables.maincamera);
 			tmr.render();
+			b2dr.render(world, b2dcam.combined);
 		}
 		
 		//render map/foreground

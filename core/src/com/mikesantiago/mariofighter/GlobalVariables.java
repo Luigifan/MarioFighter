@@ -17,6 +17,9 @@ public class GlobalVariables
 	///Pixels per meter for Box2D
 	public static final float PPM = 100;
 	
+	//category bits
+	public static final short GROUND_BIT = 2;
+	public static final short PLAYER_BIT = 4;
 	
 	public static OrthographicCamera maincamera;
 	public static OrthographicCamera hudcam;

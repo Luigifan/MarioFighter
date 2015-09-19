@@ -35,7 +35,7 @@ public class TestState
 	
 	public TestState()
 	{
-		stage = new Stage("assets/maps/test2.tmx");
+		stage = new Stage("assets/maps/test.tmx");
 	}
 	
 	public void update()
@@ -52,6 +52,10 @@ public class TestState
 			}
 			maincamera.position.set(newPos);
 			maincamera.update();
+			
+			OrthographicCamera b2dcam = stage.getB2Dcam();
+			b2dcam.position.set(maincamera.position.x / PPM, maincamera.position.y / PPM, maincamera.position.z / PPM);
+			b2dcam.update();
 			
 			Vector3 tempBgOffset = stage.getBackgroundOffset();
 			tempBgOffset.x -= 2;
@@ -73,6 +77,10 @@ public class TestState
 			maincamera.position.set(newPos);
 			maincamera.update();
 			
+			OrthographicCamera b2dcam = stage.getB2Dcam();
+			b2dcam.position.set(maincamera.position.x / PPM, maincamera.position.y / PPM, maincamera.position.z / PPM);
+			b2dcam.update();
+			
 			Vector3 tempBgOffset = stage.getBackgroundOffset();
 			tempBgOffset.x += 2;
 			stage.UpdateBgOffset(tempBgOffset);
@@ -92,6 +100,10 @@ public class TestState
 			maincamera.position.set(newPos);
 			maincamera.update();
 			
+			OrthographicCamera b2dcam = stage.getB2Dcam();
+			b2dcam.position.set(maincamera.position.x / PPM, maincamera.position.y / PPM, maincamera.position.z / PPM);
+			b2dcam.update();
+			
 			Vector3 tempBgOffset = stage.getBackgroundOffset();
 			tempBgOffset.y -= 2;
 			stage.UpdateBgOffset(tempBgOffset);
@@ -110,6 +122,10 @@ public class TestState
 			}
 			maincamera.position.set(newPos);
 			maincamera.update();
+			
+			OrthographicCamera b2dcam = stage.getB2Dcam();
+			b2dcam.position.set(maincamera.position.x / PPM, maincamera.position.y / PPM, maincamera.position.z / PPM);
+			b2dcam.update();
 			
 			Vector3 tempBgOffset = stage.getBackgroundOffset();
 			tempBgOffset.y += 2;
