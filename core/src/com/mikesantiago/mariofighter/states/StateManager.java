@@ -23,7 +23,7 @@ public class StateManager
 		currentGameState = GameState.SPLASH;
 		
 		Splash = new SplashState(tm);
-		Test = new TestState(tm);
+		Test = new TestState();
 	}
 	
 	public void update()
@@ -38,7 +38,7 @@ public class StateManager
 			break;
 		case TEST:
 			if(Test == null)
-				Test = new TestState(manager);
+				Test = new TestState();
 			Test.update();
 			Test.render(batch);
 			break;

@@ -1,15 +1,18 @@
 package com.mikesantiago.mariofighter.states;
 
 import static com.mikesantiago.mariofighter.GlobalVariables.PPM;
-import static com.mikesantiago.mariofighter.GlobalVariables.maincamera;
 import static com.mikesantiago.mariofighter.GlobalVariables.backgroundcam;
+import static com.mikesantiago.mariofighter.GlobalVariables.maincamera;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
@@ -27,74 +30,31 @@ import com.mikesantiago.mariofighter.assets.AssetManager;
 
 public class TestState 
 {
-	private World world;
-	private Box2DDebugRenderer b2dr;
+	private Stage stage;
 	
-	private AssetManager manager;
-	
-	private OrthographicCamera b2dcam;
-	
-	private TiledMap tileMap; //the real map
-	private OrthogonalTiledMapRenderer tmr; //renders map
-	
-	public TestState(AssetManager tm)
+	public TestState()
 	{
-		manager = tm;
-		world = new World(new Vector2(0, -9.81f), true);
-		b2dr = new Box2DDebugRenderer();
-		
-		//create basic bitch platform
-		BodyDef bdef = new BodyDef();
-		bdef.position.set(160f / PPM, 120f / PPM);
-		bdef.type = BodyType.StaticBody;
-		
-		Body body = world.createBody(bdef);
-		
-		PolygonShape shape = new PolygonShape();
-		shape.setAsBox(150 / PPM, 50 / PPM);
-		FixtureDef fixtureDefinition = new FixtureDef();
-		fixtureDefinition.shape = shape;
-		body.createFixture(fixtureDefinition);
-		
-		//falling box
-		bdef.position.set(160/ PPM, 400f/ PPM);
-		bdef.type = BodyType.DynamicBody;
-		body = world.createBody(bdef);
-		
-		shape.setAsBox(10 / PPM, 10 / PPM);
-		fixtureDefinition.restitution = 0.2f;
-		fixtureDefinition.shape = shape;
-		body.createFixture(fixtureDefinition);
-		
-		//setup box2dcam so we can use our conversion
-		b2dcam = new OrthographicCamera();
-		b2dcam.setToOrtho(false, GlobalVariables.V_WIDTH / PPM, GlobalVariables.V_HEIGHT / PPM);
-		
-		//////////////////////////
-		
-		//Tiled stuffs
-		tileMap = new TmxMapLoader().load("assets/maps/test.tmx");
-		tmr = new OrthogonalTiledMapRenderer(tileMap);
-		
-		String pathToBackground = tmr.getMap().getProperties().get("background").toString();
-		Texture bg = new Texture(Gdx.files.getLocalStoragePath() + pathToBackground);
-		GlobalVariables.manager.LoadResource("castle_bg", bg);
+		stage = new Stage("assets/maps/test2.tmx");
 	}
 	
 	public void update()
 	{
-		world.step(1 / 60f, 6, 2);
-		
 		if(Gdx.input.isKeyPressed(Keys.RIGHT))
 		{
 			Vector3 newPos = maincamera.position;
 			Vector3 newBgPos = maincamera.position;
 			newPos.x += 8;
+			if(newPos.x > stage.getMapWidth() - (maincamera.zoom * 10f))
+			{
+				newPos.x = stage.getMapWidth() - (maincamera.zoom * 10f);
+				return;
+			}
 			maincamera.position.set(newPos);
 			maincamera.update();
 			
-			
-			bgOffset -= 2;
+			Vector3 tempBgOffset = stage.getBackgroundOffset();
+			tempBgOffset.x -= 2;
+			stage.UpdateBgOffset(tempBgOffset);
 			backgroundcam.position.set(newBgPos);
 			backgroundcam.update();
 		}
@@ -103,47 +63,85 @@ public class TestState
 			Vector3 newPos = maincamera.position;
 			Vector3 newBgPos = maincamera.position;
 			newPos.x -= 8;
+			if(newPos.x < 0 + maincamera.zoom * 10f)
+			{
+				newPos.x = maincamera.zoom * 10f;
+				return;
+			}
+			
 			maincamera.position.set(newPos);
 			maincamera.update();
 			
-			bgOffset += 2;
+			Vector3 tempBgOffset = stage.getBackgroundOffset();
+			tempBgOffset.x += 2;
+			stage.UpdateBgOffset(tempBgOffset);
 			backgroundcam.position.set(newBgPos);
 			backgroundcam.update();
 		}
+		else if(Gdx.input.isKeyPressed(Keys.UP))
+		{
+			Vector3 newPos = maincamera.position;
+			Vector3 newBgPos = maincamera.position;
+			newPos.y += 8;
+			if(newPos.y > (stage.getMapHeight() - (maincamera.zoom * 7.5f)))
+			{
+				newPos.y = stage.getMapHeight() - (maincamera.zoom * 7.5f);
+				return;
+			}
+			maincamera.position.set(newPos);
+			maincamera.update();
+			
+			Vector3 tempBgOffset = stage.getBackgroundOffset();
+			tempBgOffset.y -= 2;
+			stage.UpdateBgOffset(tempBgOffset);
+			backgroundcam.position.set(newBgPos);
+			backgroundcam.update();
+		}
+		else if(Gdx.input.isKeyPressed(Keys.DOWN))
+		{
+			Vector3 newPos = maincamera.position;
+			Vector3 newBgPos = maincamera.position;
+			newPos.y -= 8;
+			if(newPos.y < 0 + maincamera.zoom * 7.5f)
+			{
+				newPos.y = 0 + maincamera.zoom * 7.5f;
+				return;
+			}
+			maincamera.position.set(newPos);
+			maincamera.update();
+			
+			Vector3 tempBgOffset = stage.getBackgroundOffset();
+			tempBgOffset.y += 2;
+			stage.UpdateBgOffset(tempBgOffset);
+			backgroundcam.position.set(newBgPos);
+			backgroundcam.update();
+		}
+		else if(Gdx.input.isKeyJustPressed(Keys.LEFT_BRACKET))
+		{
+			Vector3 tempBgOffset = stage.getBackgroundOffset();
+			tempBgOffset.z -= .1f;
+			if(tempBgOffset.z < .5f)
+				tempBgOffset.z = .5f;
+			stage.UpdateBgOffset(tempBgOffset);
+		}
+		else if(Gdx.input.isKeyJustPressed(Keys.RIGHT_BRACKET))
+		{
+			Vector3 tempBgOffset = stage.getBackgroundOffset();
+			tempBgOffset.z += .1f;
+			if(tempBgOffset.z < 2f)
+				tempBgOffset.z = 2f;
+			stage.UpdateBgOffset(tempBgOffset);
+		}
+		stage.update();
 	}
 	
-	private int bgOffset = 0;
 	
 	public void render(SpriteBatch sb)
 	{
 		Gdx.gl.glClearColor(0, 0, 0, 0);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		sb.begin();
 		
-		
-		//Pre world render stuff like backgrounds
-		{
-			Texture bgTexture = GlobalVariables.manager.GetTexture("castle_bg");
-			tmr.setView(backgroundcam);
-			if(!tmr.getBatch().isDrawing())
-				tmr.getBatch().begin();
-			tmr.getBatch().draw(bgTexture, 
-					(backgroundcam.position.x - (GlobalVariables.V_WIDTH / 2) + bgOffset) - 200, 
-					(backgroundcam.position.y - (GlobalVariables.V_HEIGHT / 2)) - 200, 
-					bgTexture.getWidth() * 1.5f, 
-					bgTexture.getHeight() * 1.5f);
-			if(tmr.getBatch().isDrawing())
-				tmr.getBatch().end();
-		}
-		
-		//misc render stuffs
-		{
-			tmr.setView(maincamera);
-			tmr.render();
-			b2dr.render(world, b2dcam.combined);
-			manager.GetFont().draw(sb, "top kek", 32, 32);
-		}
-		sb.end();
+		stage.render(sb);
 	}
 
 }

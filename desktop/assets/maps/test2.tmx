@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="40" height="24" tilewidth="32" tileheight="32" nextobjectid="1">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="54" height="30" tilewidth="32" tileheight="32" nextobjectid="1">
  <properties>
   <property name="background" value="/assets/maps/castle_bg.png"/>
  </properties>
  <tileset firstgid="1" name="castle_1" tilewidth="32" tileheight="32" tilecount="9">
   <image source="castle_1.png" width="96" height="96"/>
  </tileset>
- <layer name="floor" width="40" height="24">
+ <layer name="floor" width="54" height="30">
   <data encoding="base64" compression="zlib">
-   eJzt1csJACAQA9Gsf/tv2K3AmxBhAnN/t4SkbtrImoEDHz7H8OHD97dvZsu0LcYYe7fIimlV/v/h7psGjpvvAFBvDUk=
+   eJzt10EOgCAMRNFB1Mr9L2w9ggLSNP8ns+/bQZF0BN2pb1XfHuD+0S7hwoULFy5cuHD94DLfFXStw0VERLkrvi3oaocr63sjq8sC3D/DRUT0Nlt9wISe/+gNYxkNXA==
   </data>
  </layer>
 </map>
