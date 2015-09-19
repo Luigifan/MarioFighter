@@ -23,6 +23,7 @@ public class MainGameClass extends ApplicationAdapter
 	public void create () 
 	{
 		System.out.println("Assets location: " + Gdx.files.getLocalStoragePath());
+		SetupCameras();
 		batch = new SpriteBatch();
 		manager = new AssetManager();
 		stateManager = new StateManager(batch, manager);
@@ -30,8 +31,6 @@ public class MainGameClass extends ApplicationAdapter
 		manager.LoadResource("logo", new Texture("assets/logo.png"));
 		BitmapFont fnt = new BitmapFont(new FileHandle(Gdx.files.getLocalStoragePath() + "/assets/ingame-font-small.fnt"), false);
 		manager.SetFont(fnt);
-		
-		SetupCameras();
 	}
 
 	private void SetupCameras()

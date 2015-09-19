@@ -31,6 +31,7 @@ import com.mikesantiago.mariofighter.assets.AssetManager;
 public class TestState 
 {
 	private Stage stage;
+	private Vector3 OriginalCameraPosition = new Vector3((float)(10 * 32), (float)(7 * 32 + 16), 0);
 	
 	public TestState()
 	{
@@ -131,6 +132,18 @@ public class TestState
 			if(tempBgOffset.z < 2f)
 				tempBgOffset.z = 2f;
 			stage.UpdateBgOffset(tempBgOffset);
+		}
+		else if(Gdx.input.isKeyJustPressed(Keys.NUM_1))
+		{
+			stage = new Stage("assets/maps/test.tmx");
+			maincamera.position.set(OriginalCameraPosition);
+			maincamera.update();
+		}
+		else if(Gdx.input.isKeyJustPressed(Keys.NUM_2))
+		{
+			stage = new Stage("assets/maps/test2.tmx");
+			maincamera.position.set(OriginalCameraPosition);
+			maincamera.update();
 		}
 		stage.update();
 	}

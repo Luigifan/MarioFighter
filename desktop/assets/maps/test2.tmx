@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" renderorder="right-down" width="54" height="30" tilewidth="32" tileheight="32" nextobjectid="1">
  <properties>
-  <property name="background" value="/assets/maps/castle_bg.png"/>
+  <property name="background" value="/assets/maps/kek.png"/>
  </properties>
  <tileset firstgid="1" name="castle_1" tilewidth="32" tileheight="32" tilecount="9">
   <image source="castle_1.png" width="96" height="96"/>

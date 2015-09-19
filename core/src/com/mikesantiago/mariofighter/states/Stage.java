@@ -76,12 +76,14 @@ public class Stage
 		int ymod = 0;
 		for(int x = 0; x < mapWidth; x++)
 		{
-			if(x * source.getWidth() > mapWidth)
-				ymod += source.getHeight();
-			output.drawPixmap(source, x * source.getWidth(), ymod);
+			for(int y = 0; y < mapHeight; y++)
+			{
+				output.drawPixmap(source, x * source.getWidth(), y * source.getWidth());
+			}
 		}
 		bgTexture = new Texture(output);
 		output.dispose();
+		System.out.println("Background texture is " + bgTexture.getWidth() + " x " + bgTexture.getHeight());
 	}
 	
 	public void update()
