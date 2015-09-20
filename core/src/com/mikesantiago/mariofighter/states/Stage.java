@@ -10,7 +10,6 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
@@ -26,9 +25,13 @@ import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.ChainShape;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.mikesantiago.mariofighter.CustomContactListener;
 import com.mikesantiago.mariofighter.GlobalVariables;
+import com.mikesantiago.mariofighter.Input;
+import com.mikesantiago.mariofighter.PlayerOne;
+import com.mikesantiago.mariofighter.PlayerOne.Direction;
 public class Stage 
 {
 	private World world;
@@ -39,26 +42,38 @@ public class Stage
 	private Vector3 bgOffset = new Vector3(0, 0, 1f);
 	
 	private Texture bgTexture;
+	private boolean DebugMode = false;
 	
 	int mapWidth, mapHeight;
 	
 	private String mapPath;
 	
+	private PlayerOne playerOne;
+	private CustomContactListener contactListener;
+	
 	public OrthographicCamera getB2Dcam(){return b2dcam;}
 	public void setB2dcam(OrthographicCamera cam){b2dcam = cam;}
+	public PlayerOne getPlayerOne(){return playerOne;}
 	
 	public Stage(String pathToMap)
 	{
 		mapPath = pathToMap;
 		world = new World(new Vector2(0, -9.81f), true);
-		world.setContactListener(new CustomContactListener());
+		contactListener = new CustomContactListener();
+		world.setContactListener(contactListener);
 		b2dr = new Box2DDebugRenderer();
 		
 		b2dcam = new OrthographicCamera();
 		b2dcam.setToOrtho(false, GlobalVariables.V_WIDTH / PPM, GlobalVariables.V_HEIGHT / PPM);
 		
 		LoadMap(mapPath);
+		
+		playerOne = new PlayerOne(world);
 	}
+	
+	
+	public boolean getDebugMode(){return DebugMode;}
+	public void setDebugMode(boolean a){DebugMode = a;}
 	
 	private void LoadMap(String path)
 	{
@@ -103,7 +118,17 @@ public class Stage
 	
 	private void BuildPlayerOne()
 	{
+		BodyDef bdef = new BodyDef();
+		bdef.type = BodyType.DynamicBody;
+		bdef.position.set(new Vector2(32f / PPM, 256f / PPM));
 		
+		PolygonShape shape = new PolygonShape();
+		shape.setAsBox((32f / 2)/ PPM, (64f / 2) / PPM);
+		FixtureDef fdef = new FixtureDef();
+		fdef.shape = shape;
+		fdef.filter.categoryBits = GlobalVariables.PLAYER_BIT;
+		fdef.filter.maskBits = GlobalVariables.GROUND_BIT;
+		world.createBody(bdef).createFixture(fdef);
 	}
 	
 	private void BuildBox2DBodies()
@@ -137,21 +162,63 @@ public class Stage
 				v[3] = new Vector2(32f / 2 / PPM, -32f / 2 / PPM); //bot right
 				shapeDef = new ChainShape();
 				shapeDef.createChain(v);
-				fdef.friction = 0;
+				fdef.friction = .2f;
 				fdef.shape = shapeDef;
 				fdef.filter.categoryBits = GlobalVariables.GROUND_BIT; //type it is
 				fdef.filter.maskBits = GlobalVariables.PLAYER_BIT; //types allowed to collide with; use | to specify multiple
 				fdef.isSensor = false;
 				
-				world.createBody(bdef).createFixture(fdef);
+				world.createBody(bdef).createFixture(fdef).setUserData("floor");
 			}
 		}
+		
 	}
 	
-	public void update()
+	public void update(float dt)
 	{	
-		world.step(1 / 60f, 6, 2);
+		//world.step(1 / 60f, 6, 2);
+		world.step(dt, 6, 2);
+		DoPlayerMovement();
+		playerOne.update(dt);
 	}
+	
+	private static final int SPEED = 4;
+	private Vector2 momentum = new Vector2(0,0);
+	
+	private void DoPlayerMovement()
+	{
+		float desiredVelocity;
+		if(Input.isDown(Input.MOVE_RIGHT))
+		{
+			playerOne.setMoving(true);
+			playerOne.setCurrentDirection(Direction.RIGHT);
+			desiredVelocity = 1 * SPEED;
+		}
+		else if(Input.isDown(Input.MOVE_LEFT))
+		{
+			playerOne.setMoving(true);
+			playerOne.setCurrentDirection(Direction.LEFT);
+			desiredVelocity = -1 * SPEED;
+		}
+		else
+		{
+			playerOne.setMoving(false);
+			desiredVelocity = 0;
+		}
+		
+		if(Input.isDown(Input.JUMP))
+		{
+			if(contactListener.getPlayerOnGround())
+			{
+				playerOne.setMoving(false);
+				playerOne.getPlayerBody().applyForceToCenter(new Vector2(0, 96f), true);
+			}
+		}
+		momentum.x = playerOne.getPlayerBody().getLinearVelocity().x;
+		float velocityChange = desiredVelocity - momentum.x;
+		float impulse = playerOne.getPlayerBody().getMass() * velocityChange;
+		playerOne.getPlayerBody().applyLinearImpulse(new Vector2(impulse, 0), playerOne.getPlayerBody().getWorldCenter(), true);
+	} 
 	
 	public void render(SpriteBatch sb)
 	{
@@ -177,11 +244,14 @@ public class Stage
 		{
 			tmr.setView(GlobalVariables.maincamera);
 			tmr.render();
-			b2dr.render(world, b2dcam.combined);
+			if(DebugMode)
+				b2dr.render(world, b2dcam.combined);
+			playerOne.render((SpriteBatch)tmr.getBatch());
 		}
 		
 		//render map/foreground
 		{
+			
 			tmr.setView(GlobalVariables.hudcam);
 			if(!tmr.getBatch().isDrawing())
 				tmr.getBatch().begin();

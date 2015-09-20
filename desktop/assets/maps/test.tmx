@@ -8,7 +8,7 @@
  </tileset>
  <layer name="floor" width="40" height="24">
   <data encoding="base64" compression="zlib">
-   eJzt1csJACAQA9Gsf/tv2K3AmxBhAnN/t4SkbtrImoEDHz7H8OHD97dvZsu0LcYYe7fIimlV/v/h7psGjpvvAFBvDUk=
+   eJzt1TsKACAQA9H41/tf2C2tbGxGSGD6B1tsktSg9agCHPbZR8w+++z72zeiCW2JufOmxNn3Nvve9pMvRRlaEf9/0H0D4Lj5NgBBDas=
   </data>
  </layer>
  <objectgroup name="p1">

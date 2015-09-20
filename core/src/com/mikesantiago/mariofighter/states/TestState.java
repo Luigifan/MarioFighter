@@ -4,166 +4,115 @@ import static com.mikesantiago.mariofighter.GlobalVariables.PPM;
 import static com.mikesantiago.mariofighter.GlobalVariables.backgroundcam;
 import static com.mikesantiago.mariofighter.GlobalVariables.maincamera;
 
+import java.awt.Point;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.maps.MapProperties;
-import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader;
-import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
-import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.badlogic.gdx.physics.box2d.World;
 import com.mikesantiago.mariofighter.GlobalVariables;
-import com.mikesantiago.mariofighter.assets.AssetManager;
+import com.mikesantiago.mariofighter.Input;
+import com.mikesantiago.mariofighter.PlayerOne.Direction;
 
 public class TestState 
 {
+	public enum MOVEDIRECTION
+	{
+		LEFT, RIGHT, UP, DOWN, STOP
+	}
+	
 	private Stage stage;
 	private Vector3 OriginalCameraPosition = new Vector3((float)(10 * 32), (float)(7 * 32 + 16), 0);
 	
 	public TestState()
 	{
 		stage = new Stage("assets/maps/test.tmx");
+		
+		cameraBounds = new Point[4];
+		cameraBounds[0] = new Point(32,32);
+		cameraBounds[1] = new Point(GlobalVariables.V_WIDTH - 32,32);
+		cameraBounds[2] = new Point(32,GlobalVariables.V_HEIGHT - 32);
+		cameraBounds[3] = new Point(GlobalVariables.V_WIDTH - 32,GlobalVariables.V_HEIGHT - 32);
+		
 	}
 	
-	public void update()
+	private Point[] cameraBounds = new Point[4];
+	
+	private void resetCameraBounds()
 	{
-		if(Gdx.input.isKeyPressed(Keys.RIGHT))
-		{
-			Vector3 newPos = maincamera.position;
-			Vector3 newBgPos = maincamera.position;
-			newPos.x += 8;
-			if(newPos.x > stage.getMapWidth() - (maincamera.zoom * 10f))
-			{
-				newPos.x = stage.getMapWidth() - (maincamera.zoom * 10f);
-				return;
-			}
-			maincamera.position.set(newPos);
-			maincamera.update();
-			
-			OrthographicCamera b2dcam = stage.getB2Dcam();
-			b2dcam.position.set(maincamera.position.x / PPM, maincamera.position.y / PPM, maincamera.position.z / PPM);
-			b2dcam.update();
-			
-			Vector3 tempBgOffset = stage.getBackgroundOffset();
-			tempBgOffset.x -= 2;
-			stage.UpdateBgOffset(tempBgOffset);
-			backgroundcam.position.set(newBgPos);
-			backgroundcam.update();
-		}
-		else if(Gdx.input.isKeyPressed(Keys.LEFT))
-		{
-			Vector3 newPos = maincamera.position;
-			Vector3 newBgPos = maincamera.position;
-			newPos.x -= 8;
-			if(newPos.x < 0 + maincamera.zoom * 10f)
-			{
-				newPos.x = maincamera.zoom * 10f;
-				return;
-			}
-			
-			maincamera.position.set(newPos);
-			maincamera.update();
-			
-			OrthographicCamera b2dcam = stage.getB2Dcam();
-			b2dcam.position.set(maincamera.position.x / PPM, maincamera.position.y / PPM, maincamera.position.z / PPM);
-			b2dcam.update();
-			
-			Vector3 tempBgOffset = stage.getBackgroundOffset();
-			tempBgOffset.x += 2;
-			stage.UpdateBgOffset(tempBgOffset);
-			backgroundcam.position.set(newBgPos);
-			backgroundcam.update();
-		}
-		else if(Gdx.input.isKeyPressed(Keys.UP))
-		{
-			Vector3 newPos = maincamera.position;
-			Vector3 newBgPos = maincamera.position;
-			newPos.y += 8;
-			if(newPos.y > (stage.getMapHeight() - (maincamera.zoom * 7.5f)))
-			{
-				newPos.y = stage.getMapHeight() - (maincamera.zoom * 7.5f);
-				return;
-			}
-			maincamera.position.set(newPos);
-			maincamera.update();
-			
-			OrthographicCamera b2dcam = stage.getB2Dcam();
-			b2dcam.position.set(maincamera.position.x / PPM, maincamera.position.y / PPM, maincamera.position.z / PPM);
-			b2dcam.update();
-			
-			Vector3 tempBgOffset = stage.getBackgroundOffset();
-			tempBgOffset.y -= 2;
-			stage.UpdateBgOffset(tempBgOffset);
-			backgroundcam.position.set(newBgPos);
-			backgroundcam.update();
-		}
-		else if(Gdx.input.isKeyPressed(Keys.DOWN))
-		{
-			Vector3 newPos = maincamera.position;
-			Vector3 newBgPos = maincamera.position;
-			newPos.y -= 8;
-			if(newPos.y < 0 + maincamera.zoom * 7.5f)
-			{
-				newPos.y = 0 + maincamera.zoom * 7.5f;
-				return;
-			}
-			maincamera.position.set(newPos);
-			maincamera.update();
-			
-			OrthographicCamera b2dcam = stage.getB2Dcam();
-			b2dcam.position.set(maincamera.position.x / PPM, maincamera.position.y / PPM, maincamera.position.z / PPM);
-			b2dcam.update();
-			
-			Vector3 tempBgOffset = stage.getBackgroundOffset();
-			tempBgOffset.y += 2;
-			stage.UpdateBgOffset(tempBgOffset);
-			backgroundcam.position.set(newBgPos);
-			backgroundcam.update();
-		}
-		else if(Gdx.input.isKeyJustPressed(Keys.LEFT_BRACKET))
-		{
-			Vector3 tempBgOffset = stage.getBackgroundOffset();
-			tempBgOffset.z -= .1f;
-			if(tempBgOffset.z < .5f)
-				tempBgOffset.z = .5f;
-			stage.UpdateBgOffset(tempBgOffset);
-		}
-		else if(Gdx.input.isKeyJustPressed(Keys.RIGHT_BRACKET))
-		{
-			Vector3 tempBgOffset = stage.getBackgroundOffset();
-			tempBgOffset.z += .1f;
-			if(tempBgOffset.z < 2f)
-				tempBgOffset.z = 2f;
-			stage.UpdateBgOffset(tempBgOffset);
-		}
-		else if(Gdx.input.isKeyJustPressed(Keys.NUM_1))
-		{
-			stage = new Stage("assets/maps/test.tmx");
-			maincamera.position.set(OriginalCameraPosition);
-			maincamera.update();
-		}
-		else if(Gdx.input.isKeyJustPressed(Keys.NUM_2))
-		{
-			stage = new Stage("assets/maps/test2.tmx");
-			maincamera.position.set(OriginalCameraPosition);
-			maincamera.update();
-		}
-		stage.update();
+		cameraBounds = new Point[4];
+		cameraBounds[0] = new Point(32,32);
+		cameraBounds[1] = new Point(GlobalVariables.V_WIDTH - 32,32);
+		cameraBounds[2] = new Point(32,GlobalVariables.V_HEIGHT - 32);
+		cameraBounds[3] = new Point(GlobalVariables.V_WIDTH - 32,GlobalVariables.V_HEIGHT - 32);
 	}
 	
+	private boolean keyed = false;
+	public void update(float dt)
+	{
+		stage.update(dt);
+		if(stage.getPlayerOne().getMoving())
+		{
+			if(stage.getPlayerOne().getCurrentDirection() == Direction.RIGHT)
+			{
+				if(stage.getPlayerOne().getPlayerBody().getPosition().x * PPM > cameraBounds[1].x - 256f)
+				{
+					cameraBounds[1].x += 2 + Math.ceil(stage.getPlayerOne().getPlayerBody().getLinearVelocity().x);
+
+					Vector3 newPos = maincamera.position;
+					Vector3 newBgPos = maincamera.position;
+					newPos.x += 3 + Math.ceil(stage.getPlayerOne().getPlayerBody().getLinearVelocity().x);
+					if(newPos.x > stage.getMapWidth() - (maincamera.zoom * 10f))
+					{
+						newPos.x = stage.getMapWidth() - (maincamera.zoom * 10f);
+						return;
+					}
+					maincamera.position.set(newPos);
+					maincamera.update();
+
+					OrthographicCamera b2dcam = stage.getB2Dcam();
+					b2dcam.position.set(maincamera.position.x / PPM, maincamera.position.y / PPM, maincamera.position.z / PPM);
+					b2dcam.update();
+
+					Vector3 tempBgOffset = stage.getBackgroundOffset();
+					tempBgOffset.x -= .75f;
+					stage.UpdateBgOffset(tempBgOffset);
+					backgroundcam.position.set(newBgPos);
+					backgroundcam.update();
+				}
+			}
+			if(stage.getPlayerOne().getCurrentDirection() == Direction.LEFT)
+			{
+				if(stage.getPlayerOne().getPlayerBody().getPosition().x * PPM < cameraBounds[1].x - 256f)
+				{
+					cameraBounds[1].x -= 2 + -(Math.ceil(stage.getPlayerOne().getPlayerBody().getLinearVelocity().x));
+					Vector3 newPos = maincamera.position;
+					Vector3 newBgPos = maincamera.position;
+					newPos.x -= 3 + -(Math.ceil(stage.getPlayerOne().getPlayerBody().getLinearVelocity().x));
+					if(newPos.x < 0 + (maincamera.zoom * 10f))
+					{
+						newPos.x = (maincamera.zoom * 10f);
+						return;
+					}
+					maincamera.position.set(newPos);
+					maincamera.update();
+
+					OrthographicCamera b2dcam = stage.getB2Dcam();
+					b2dcam.position.set(maincamera.position.x / PPM, maincamera.position.y / PPM, maincamera.position.z / PPM);
+					b2dcam.update();
+
+					Vector3 tempBgOffset = stage.getBackgroundOffset();
+					tempBgOffset.x += .75f;
+					stage.UpdateBgOffset(tempBgOffset);
+					backgroundcam.position.set(newBgPos);
+					backgroundcam.update();
+				}
+			}
+		}
+	}
 	
 	public void render(SpriteBatch sb)
 	{
@@ -171,6 +120,12 @@ public class TestState
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		
 		stage.render(sb);
+		sb.begin();
+		sb.setProjectionMatrix(GlobalVariables.hudcam.combined);
+		GlobalVariables.manager.GetFont().draw(sb, Gdx.graphics.getFramesPerSecond() + " FPS", 0, GlobalVariables.V_HEIGHT);
+		sb.setProjectionMatrix(maincamera.combined);
+		
+		sb.end();
 	}
 
 }

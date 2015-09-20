@@ -20,22 +20,30 @@ public class SplashState
 			manager.LoadResource("logo", new Texture("assets/logo.png"));
 	}
 	
-	public void update()
+	private int framecounter = 0;
+	
+	public void update(float dt)
 	{
-		if(Gdx.input.isKeyPressed(Keys.SPACE))
+		framecounter++;
+		if(Math.round((float)framecounter / 60) >= 2) //after two seconds
 		{
 			GlobalVariables.stateManager.SetState(GameState.TEST);
 		}
 		
+		//if(Gdx.input.isKeyPressed(Keys.SPACE))
+		//{
+		//	GlobalVariables.stateManager.SetState(GameState.TEST);
+		//}
 	}
+	
 	public void render(SpriteBatch sb)
 	{
-		
 		int x, y;
 		x = (GlobalVariables.V_WIDTH / 2) - (manager.GetTexture("logo").getWidth() / 2);
 		y = (GlobalVariables.V_HEIGHT / 2) - (manager.GetTexture("logo").getHeight() / 2);
 		
 		Gdx.gl.glClearColor(1, 1, 1, 1);
+		//Gdx.gl.glClearColor(0,0,0,1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		sb.begin();
 		sb.draw(manager.GetTexture("logo"), x, y);

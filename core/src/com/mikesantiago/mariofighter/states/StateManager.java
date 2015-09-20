@@ -26,20 +26,20 @@ public class StateManager
 		Test = new TestState();
 	}
 	
-	public void update()
+	public void update(float dt)
 	{
 		switch(currentGameState)
 		{
 		case SPLASH:
 			if(Splash == null)
 				Splash = new SplashState(manager);
-			Splash.update();
+			Splash.update(dt);
 			Splash.render(batch);
 			break;
 		case TEST:
 			if(Test == null)
 				Test = new TestState();
-			Test.update();
+			Test.update(dt);
 			Test.render(batch);
 			break;
 		}

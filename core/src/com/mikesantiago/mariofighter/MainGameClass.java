@@ -19,6 +19,8 @@ import com.mikesantiago.mariofighter.assets.AssetManager;
 import com.mikesantiago.mariofighter.states.StateManager;
 public class MainGameClass extends ApplicationAdapter 
 {
+	private float accumulator = 0;
+	
 	@Override
 	public void create () 
 	{
@@ -26,11 +28,14 @@ public class MainGameClass extends ApplicationAdapter
 		SetupCameras();
 		batch = new SpriteBatch();
 		manager = new AssetManager();
+		manager.LoadResource("mario", new Texture("assets/mariotest.png"));
 		stateManager = new StateManager(batch, manager);
 		
 		manager.LoadResource("logo", new Texture("assets/logo.png"));
 		BitmapFont fnt = new BitmapFont(new FileHandle(Gdx.files.getLocalStoragePath() + "/assets/ingame-font-small.fnt"), false);
 		manager.SetFont(fnt);
+		
+		Gdx.input.setInputProcessor(new CustomInputProcessor());
 	}
 
 	private void SetupCameras()
@@ -56,7 +61,13 @@ public class MainGameClass extends ApplicationAdapter
 	
 	public void update()
 	{
-		stateManager.update();
+		accumulator += Gdx.graphics.getDeltaTime();
+		while(accumulator >= GlobalVariables.STEP)
+		{
+			accumulator -= GlobalVariables.STEP;
+			stateManager.update(GlobalVariables.STEP);
+			Input.update();
+		}
 	}
 	
 	@Override
