@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="40" height="24" tilewidth="32" tileheight="32" nextobjectid="2">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="100" height="48" tilewidth="32" tileheight="32" nextobjectid="2">
  <properties>
   <property name="background" value="/assets/maps/castle_bg.png"/>
  </properties>
  <tileset firstgid="1" name="castle_1" tilewidth="32" tileheight="32" tilecount="9">
   <image source="castle_1.png" width="96" height="96"/>
  </tileset>
- <layer name="floor" width="40" height="24">
+ <layer name="floor" width="100" height="48">
   <data encoding="base64" compression="zlib">
-   eJzt1TsKACAQA9H41/tf2C2tbGxGSGD6B1tsktSg9agCHPbZR8w+++z72zeiCW2JufOmxNn3Nvve9pMvRRlaEf9/0H0D4Lj5NgBBDas=
+   eJztm4lywyAMRGmcNsn//3CzE+9UpeIwUA5Hb8bj+ohDtegAE+cMwzCM/+Y2ugEL8vXcPpTzd+Wcdp/k4l4a8L7tuT3Km/aWfIq/YUdpz6t76eXEcegZuG8Tx9Th0qaZb4HvA5pPSLbEdQ3okvIr42UjLZagb2/73veHmF7X/Zma7S1mxYFdvwLXLvu1h/tr/1C84jV8NjcXGT+k6h74hhb3S+NOSHvjRaldWT9hf6TPm3/E+UzfoiLteqTPx+Jca1as52rHaaxve33fEVCL9NS/BaX2gQYlsad3n10tPmr15839Hgu2IlRz/Ser6RHLH/CBlv4+YiyI7yzNkTMCP+EYhPMg6HMcm8wO2n0mPc7AajHr7CBmmSZzEZsXMvpBv2AtYZqMhbmcdb3FrXHIuTVZY5W8u1mV0DvfEaBWl+On1j7CsU1sm0X7Geby5DtjcPX2tVxdWo9Z8hX6zubG+grt/tjbwj5yF+dqn7+KHmSkHtJHYX/q4/tNKSvqAWCL1Dwy2s13XK3iSawvtMghq+pBqAnfr3NNltZPWRvV2C3V/2tz3Eg90Ndow9LPo31H7Vv6fTmfWzle8btLnu/bZjvwnNI+nKNHbW4bqQdiDeuSXNjeEFvies08YG7fr6mxVssfudrh/6I2jIktatEcavJTDz1q84Qkxya0PezC2irnnWXKjjmxqLZe6KFHTZ7wSfmHr3lIB44rtTWrWjtzYpV831lKDz1K8kSI0P+q+YDW7pxxC58XO9agX9TYi7aKbbOtV/btqdVLIftx/WMMf71Cbt6YZZ6PtMwTMbjGB5vsi1y/lWM/5nuNknWSs8w/S1rmiRw49+z/rucIMt5rv5HIfe5svgFa5okUR9dcS+gbnN/iGB/nWI+Ffmuigc/MFtN7w77MuaqL2MPOt/2YtsKeNfDZ6JUnjDx65wkjTs888W4w9sQ2i0v9WG0+8eyYHnPButD0mINvT1QJcw==
   </data>
  </layer>
  <objectgroup name="p1">
-  <object id="1" name="p1" x="131" y="546" width="25" height="59"/>
+  <object id="1" name="p1" x="131" y="1314" width="25" height="59"/>
  </objectgroup>
 </map>

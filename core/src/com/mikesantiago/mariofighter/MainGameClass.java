@@ -1,14 +1,16 @@
 package com.mikesantiago.mariofighter;
 
-import static com.mikesantiago.mariofighter.GlobalVariables.batch;
 import static com.mikesantiago.mariofighter.GlobalVariables.backgroundcam;
+import static com.mikesantiago.mariofighter.GlobalVariables.batch;
+import static com.mikesantiago.mariofighter.GlobalVariables.hudcam;
+import static com.mikesantiago.mariofighter.GlobalVariables.maincamera;
 import static com.mikesantiago.mariofighter.GlobalVariables.manager;
 import static com.mikesantiago.mariofighter.GlobalVariables.stateManager;
-import static com.mikesantiago.mariofighter.GlobalVariables.maincamera;
-import static com.mikesantiago.mariofighter.GlobalVariables.hudcam;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Graphics.DisplayMode;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -36,6 +38,11 @@ public class MainGameClass extends ApplicationAdapter
 		manager.SetFont(fnt);
 		
 		Gdx.input.setInputProcessor(new CustomInputProcessor());
+		
+		for(DisplayMode m : Gdx.graphics.getDisplayModes())
+		{
+			System.out.println(String.format("%s x %s @ %shz %s BBP", m.width, m.height, m.refreshRate, m.bitsPerPixel));
+		}
 	}
 
 	private void SetupCameras()
@@ -68,8 +75,29 @@ public class MainGameClass extends ApplicationAdapter
 			stateManager.update(GlobalVariables.STEP);
 			Input.update();
 		}
+		if(Gdx.input.isKeyJustPressed(Keys.F11))
+		{
+			Gdx.graphics.getDisplayModes();
+			if(!isFullscreen)
+			{
+				for(DisplayMode m : Gdx.graphics.getDisplayModes())
+				{
+					if(m.width == 640 && m.height == 480)
+					{
+						Gdx.graphics.setDisplayMode(640, 480, true);
+						isFullscreen = true;
+						return;
+					}
+				}
+			}
+			else
+			{
+				Gdx.graphics.setDisplayMode(640, 480, false);
+				isFullscreen = false;
+			}
+		}
 	}
-	
+	private boolean isFullscreen = false;
 	@Override
 	public void render () 
 	{

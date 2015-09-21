@@ -26,6 +26,7 @@ import com.badlogic.gdx.physics.box2d.ChainShape;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.physics.box2d.Shape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.mikesantiago.mariofighter.CustomContactListener;
 import com.mikesantiago.mariofighter.GlobalVariables;
@@ -108,7 +109,7 @@ public class Stage
 		{
 			for(int y = 0; y < mapHeight; y++)
 			{
-				output.drawPixmap(source, x * source.getWidth(), y * source.getWidth());
+				output.drawPixmap(source, x * source.getWidth(), y * source.getHeight());
 			}
 		}
 		bgTexture = new Texture(output);
@@ -141,6 +142,7 @@ public class Stage
 		Fixture fixture;
 		
 		ChainShape shapeDef = new ChainShape();
+		PolygonShape shapeDef2 = new PolygonShape();
 		
 		for(int row = 0; row < floorLayer.getHeight(); row++)
 		{
@@ -163,7 +165,7 @@ public class Stage
 				shapeDef = new ChainShape();
 				shapeDef.createChain(v);
 				fdef.friction = .2f;
-				fdef.shape = shapeDef;
+				fdef.shape = shapeDef2;
 				fdef.filter.categoryBits = GlobalVariables.GROUND_BIT; //type it is
 				fdef.filter.maskBits = GlobalVariables.PLAYER_BIT; //types allowed to collide with; use | to specify multiple
 				fdef.isSensor = false;
@@ -208,7 +210,15 @@ public class Stage
 		
 		if(Input.isDown(Input.JUMP))
 		{
-			if(contactListener.getPlayerOnGround())
+			if(!allowUnlimitedHops)
+			{
+				if(contactListener.getPlayerOnGround())
+				{
+					playerOne.setMoving(false);
+					playerOne.getPlayerBody().applyForceToCenter(new Vector2(0, 96f), true);
+				}
+			}
+			else
 			{
 				playerOne.setMoving(false);
 				playerOne.getPlayerBody().applyForceToCenter(new Vector2(0, 96f), true);
@@ -219,6 +229,11 @@ public class Stage
 		float impulse = playerOne.getPlayerBody().getMass() * velocityChange;
 		playerOne.getPlayerBody().applyLinearImpulse(new Vector2(impulse, 0), playerOne.getPlayerBody().getWorldCenter(), true);
 	} 
+	
+	private boolean allowUnlimitedHops = false;
+	public boolean getAllowedUnlimitedHops(){return allowUnlimitedHops;}
+	public void setAllowUnlimitedHops(boolean a){allowUnlimitedHops = a;}
+	
 	
 	public void render(SpriteBatch sb)
 	{
