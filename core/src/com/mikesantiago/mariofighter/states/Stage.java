@@ -165,7 +165,7 @@ public class Stage
 				shapeDef = new ChainShape();
 				shapeDef.createChain(v);
 				fdef.friction = .2f;
-				fdef.shape = shapeDef2;
+				fdef.shape = shapeDef;
 				fdef.filter.categoryBits = GlobalVariables.GROUND_BIT; //type it is
 				fdef.filter.maskBits = GlobalVariables.PLAYER_BIT; //types allowed to collide with; use | to specify multiple
 				fdef.isSensor = false;
