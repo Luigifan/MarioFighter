@@ -4,13 +4,12 @@ import static com.mikesantiago.mariofighter.GlobalVariables.PPM;
 import static com.mikesantiago.mariofighter.GlobalVariables.backgroundcam;
 import static com.mikesantiago.mariofighter.GlobalVariables.maincamera;
 
-import java.awt.Point;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.mikesantiago.mariofighter.CustomTextListener;
 import com.mikesantiago.mariofighter.GlobalVariables;
@@ -29,27 +28,8 @@ public class TestState
 	public TestState()
 	{
 		stage = new Stage("assets/maps/test.tmx");
-		
-		cameraBounds = new Point[4];
-		cameraBounds[0] = new Point(32,32);
-		cameraBounds[1] = new Point(GlobalVariables.V_WIDTH - 32,32);
-		cameraBounds[2] = new Point(32,GlobalVariables.V_HEIGHT - 32);
-		cameraBounds[3] = new Point(GlobalVariables.V_WIDTH - 32,GlobalVariables.V_HEIGHT - 32);
-		
 	}
 	
-	private Point[] cameraBounds = new Point[4];
-	
-	private void resetCameraBounds()
-	{
-		cameraBounds = new Point[4];
-		cameraBounds[0] = new Point(32,32);
-		cameraBounds[1] = new Point(GlobalVariables.V_WIDTH - 32,32);
-		cameraBounds[2] = new Point(32,GlobalVariables.V_HEIGHT - 32);
-		cameraBounds[3] = new Point(GlobalVariables.V_WIDTH - 32,GlobalVariables.V_HEIGHT - 32);
-	}
-	
-	private boolean keyed = false;
 	public void update(float dt)
 	{
 		stage.update(dt);
@@ -70,7 +50,7 @@ public class TestState
 			{
 				Vector3 tempBgOffset = stage.getBackgroundOffset();
 				Vector3 newBgPos = maincamera.position;
-				tempBgOffset.x -= 1f;
+				tempBgOffset.x -= GlobalVariables.BGOFFSET;
 				stage.UpdateBgOffset(tempBgOffset);
 				backgroundcam.position.set(newBgPos);
 				backgroundcam.update();
@@ -79,7 +59,7 @@ public class TestState
 			{
 				Vector3 tempBgOffset = stage.getBackgroundOffset();
 				Vector3 newBgPos = maincamera.position;
-				tempBgOffset.x += 1f;
+				tempBgOffset.x += GlobalVariables.BGOFFSET;
 				stage.UpdateBgOffset(tempBgOffset);
 				backgroundcam.position.set(newBgPos);
 				backgroundcam.update();
@@ -92,7 +72,7 @@ public class TestState
 			{
 				Vector3 tempBgOffset = stage.getBackgroundOffset();
 				Vector3 newBgPos = maincamera.position;
-				tempBgOffset.y -= 1f;
+				tempBgOffset.y -= GlobalVariables.BGOFFSET;
 				stage.UpdateBgOffset(tempBgOffset);
 				backgroundcam.position.set(newBgPos);
 				backgroundcam.update();
@@ -101,7 +81,7 @@ public class TestState
 			{
 				Vector3 tempBgOffset = stage.getBackgroundOffset();
 				Vector3 newBgPos = maincamera.position;
-				tempBgOffset.y += 1f;
+				tempBgOffset.y += GlobalVariables.BGOFFSET;
 				stage.UpdateBgOffset(tempBgOffset);
 				backgroundcam.position.set(newBgPos);
 				backgroundcam.update();
@@ -127,6 +107,29 @@ public class TestState
 		{
 			stage.setDebugMode(!stage.getDebugMode());
 		}
+		if(Gdx.input.isKeyJustPressed(Keys.R))
+		{
+			reset();
+		}
+	}
+	
+	private void reset()
+	{
+		stage.getPlayerOne().getPlayerBodyDef().position.set(new Vector2(32f / PPM, 256f / PPM));
+		stage.getPlayerOne().getPlayerBody().setTransform(new Vector2(32f / PPM, 256f / PPM), 0);
+		
+		maincamera = new OrthographicCamera(20, 15);
+		maincamera.translate(20, 15);
+		maincamera.zoom = 32f;
+		maincamera.position.set(new Vector3((float)(10 * 32), (float)(7 * 32 + 16), 0));
+		maincamera.update();
+		
+		backgroundcam = new OrthographicCamera(20, 15);
+		backgroundcam.translate(20, 15);
+		backgroundcam.zoom = 32f;
+		backgroundcam.position.set(new Vector3((float)(10 * 32), (float)(7 * 32 + 16), 0));
+		backgroundcam.update();
+		
 	}
 	
 	private boolean cheatJustInput = false;

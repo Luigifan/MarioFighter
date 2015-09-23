@@ -43,7 +43,7 @@ public class PlayerOne
 		playerBody = worldToCreateIn.createBody(playerBodyDef);
 		
 		playerShape = new PolygonShape();
-		playerShape.setAsBox((32f / 2) / PPM, (64f / 2) / PPM);
+		playerShape.setAsBox((32f / 2) / PPM, (36f / 2) / PPM);
 		
 		playerFixtureDef = new FixtureDef();
 		playerFixtureDef.shape = playerShape;

@@ -14,6 +14,7 @@ public class GlobalVariables
 	public static int V_WIDTH = 640; //640
 	public static int V_HEIGHT = 480; //480
 	public static final float STEP = 1 / 60f;
+	public static final float BGOFFSET = 1f;
 	
 	///Pixels per meter for Box2D
 	public static final float PPM = 100;
