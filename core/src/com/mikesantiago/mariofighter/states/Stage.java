@@ -44,6 +44,7 @@ public class Stage
 	
 	private Texture bgTexture;
 	private boolean DebugMode = false;
+	private boolean SpawnPlayer = true;
 	
 	int mapWidth, mapHeight;
 	
@@ -72,9 +73,29 @@ public class Stage
 		playerOne = new PlayerOne(world);
 	}
 	
+	public Stage(String pathToMap, boolean spawnPlayer)
+	{
+		mapPath = pathToMap;
+		world = new World(new Vector2(0, -9.81f), true);
+		contactListener = new CustomContactListener();
+		world.setContactListener(contactListener);
+		b2dr = new Box2DDebugRenderer();
+		
+		b2dcam = new OrthographicCamera();
+		b2dcam.setToOrtho(false, GlobalVariables.V_WIDTH / PPM, GlobalVariables.V_HEIGHT / PPM);
+		
+		LoadMap(mapPath);
+		
+		SpawnPlayer = spawnPlayer;
+		
+		if(SpawnPlayer)
+			playerOne = new PlayerOne(world);
+	}
+	
 	
 	public boolean getDebugMode(){return DebugMode;}
 	public void setDebugMode(boolean a){DebugMode = a;}
+	public boolean getSpawnPlayer(){return SpawnPlayer;}
 	
 	private void LoadMap(String path)
 	{
@@ -102,7 +123,8 @@ public class Stage
 	
 	private void SetupBgTexture(String pathToTexture)
 	{
-		Pixmap source = new Pixmap(new FileHandle(Gdx.files.getLocalStoragePath() + pathToTexture));
+		Pixmap source = new Pixmap(Gdx.files.internal(pathToTexture));
+		//Pixmap source = new Texture(pathToTexture).getTextureData().consumePixmap();
 		Pixmap output = new Pixmap(mapWidth, mapHeight, source.getFormat());
 		int ymod = 0;
 		for(int x = 0; x < mapWidth; x++)
@@ -180,8 +202,11 @@ public class Stage
 	{	
 		//world.step(1 / 60f, 6, 2);
 		world.step(dt, 6, 2);
-		DoPlayerMovement();
-		playerOne.update(dt);
+		if(SpawnPlayer)
+		{
+			DoPlayerMovement();
+			playerOne.update(dt);
+		}
 	}
 	
 	private static final int SPEED = 4;
@@ -189,6 +214,7 @@ public class Stage
 	
 	private void DoPlayerMovement()
 	{
+		
 		float desiredVelocity;
 		if(Input.isDown(Input.MOVE_RIGHT))
 		{
@@ -261,7 +287,8 @@ public class Stage
 			tmr.render();
 			if(DebugMode)
 				b2dr.render(world, b2dcam.combined);
-			playerOne.render((SpriteBatch)tmr.getBatch());
+			if(SpawnPlayer)
+				playerOne.render((SpriteBatch)tmr.getBatch());
 		}
 		
 		//render map/foreground

@@ -9,11 +9,12 @@ public class StateManager
 	private SpriteBatch batch;
 	private SplashState Splash;
 	private TestState Test;
+	private TestStateAndroid Test_Android;
 	private AssetManager manager;
 	
 	public enum GameState
 	{
-		SPLASH, MENU, FIGHTERSELECT, STAGESELECT, GAME, TEST
+		SPLASH, MENU, FIGHTERSELECT, STAGESELECT, GAME, TEST, TEST_ANDROID
 	}
 	
 	public StateManager(SpriteBatch sb, AssetManager tm)
@@ -24,6 +25,7 @@ public class StateManager
 		
 		Splash = new SplashState(tm);
 		Test = new TestState();
+		Test_Android = new TestStateAndroid();
 	}
 	
 	public void update(float dt)
@@ -41,6 +43,11 @@ public class StateManager
 				Test = new TestState();
 			Test.update(dt);
 			Test.render(batch);
+			break;
+		case TEST_ANDROID:
+			if(Test_Android == null)
+				Test_Android = new TestStateAndroid();
+			
 			break;
 		}
 	}

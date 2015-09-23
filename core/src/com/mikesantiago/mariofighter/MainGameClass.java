@@ -26,15 +26,16 @@ public class MainGameClass extends ApplicationAdapter
 	@Override
 	public void create () 
 	{
-		System.out.println("Assets location: " + Gdx.files.getLocalStoragePath());
+		//System.out.println("Assets location: " + Gdx.files.getLocalStoragePath());
+		System.out.println("Mario asset should be in : " + Gdx.files.internal("assets/mariotest.png").path());
 		SetupCameras();
 		batch = new SpriteBatch();
 		manager = new AssetManager();
-		manager.LoadResource("mario", new Texture("assets/mariotest.png"));
+		manager.LoadResource("mario", new Texture(Gdx.files.internal("assets/mariotest.png")));
 		stateManager = new StateManager(batch, manager);
 		
-		manager.LoadResource("logo", new Texture("assets/logo.png"));
-		BitmapFont fnt = new BitmapFont(new FileHandle(Gdx.files.getLocalStoragePath() + "/assets/ingame-font-small.fnt"), false);
+		manager.LoadResource("logo", new Texture(Gdx.files.internal("assets/logo.png")));
+		BitmapFont fnt = new BitmapFont(Gdx.files.internal("assets/ingame-font-small.fnt"), false);
 		manager.SetFont(fnt);
 		
 		Gdx.input.setInputProcessor(new CustomInputProcessor());
