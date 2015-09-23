@@ -65,7 +65,7 @@ public class TestState
 			b2dcam.update();
 			
 			Vector3 tempBgOffset = stage.getBackgroundOffset();
-			tempBgOffset.x -= 2;
+			tempBgOffset.x -= GlobalVariables.BGOFFSET;
 			stage.UpdateBgOffset(tempBgOffset);
 			backgroundcam.position.set(newBgPos);
 			backgroundcam.update();
@@ -89,7 +89,7 @@ public class TestState
 			b2dcam.update();
 			
 			Vector3 tempBgOffset = stage.getBackgroundOffset();
-			tempBgOffset.x += 2;
+			tempBgOffset.x += GlobalVariables.BGOFFSET;
 			stage.UpdateBgOffset(tempBgOffset);
 			backgroundcam.position.set(newBgPos);
 			backgroundcam.update();
@@ -112,7 +112,7 @@ public class TestState
 			b2dcam.update();
 			
 			Vector3 tempBgOffset = stage.getBackgroundOffset();
-			tempBgOffset.y -= 2;
+			tempBgOffset.y -= GlobalVariables.BGOFFSET;
 			stage.UpdateBgOffset(tempBgOffset);
 			backgroundcam.position.set(newBgPos);
 			backgroundcam.update();
@@ -135,7 +135,7 @@ public class TestState
 			b2dcam.update();
 			
 			Vector3 tempBgOffset = stage.getBackgroundOffset();
-			tempBgOffset.y += 2;
+			tempBgOffset.y += GlobalVariables.BGOFFSET;
 			stage.UpdateBgOffset(tempBgOffset);
 			backgroundcam.position.set(newBgPos);
 			backgroundcam.update();
@@ -144,7 +144,7 @@ public class TestState
 	
 	private enum CameraUpdateType
 	{
-		XONLY, YONLY, XANDY
+		XONLY, YONLY, XANDY, NONE
 	}
 	private void updateCameraWithMouse()
 	{
@@ -159,38 +159,94 @@ public class TestState
 			{
 				updateType = CameraUpdateType.XONLY;
 			}
-			else if(newCamPos.y < 0 + (maincamera.zoom * 7.5f))
+			if(newCamPos.y < 0 + (maincamera.zoom * 7.5f))
 			{
 				updateType = CameraUpdateType.XONLY;
 			}
-			else if(newCamPos.x < 0 + (maincamera.zoom * 10f))
+			if(newCamPos.x < 0 + (maincamera.zoom * 10f))
 			{
 				updateType = CameraUpdateType.YONLY;
 			}
-			else if(newCamPos.x > stage.getMapWidth() - (maincamera.zoom * 10f))
+			if(newCamPos.x > stage.getMapWidth() - (maincamera.zoom * 10f))
 			{
 				updateType = CameraUpdateType.YONLY;
 			}
+			
+			if(newCamPos.x < 0 + (maincamera.zoom * 10f) && newCamPos.y < 0 + (maincamera.zoom * 7.5f))
+				updateType = CameraUpdateType.NONE;
+			if(newCamPos.x > stage.getMapWidth() - (maincamera.zoom * 10f) && newCamPos.y > stage.getMapHeight() - (maincamera.zoom * 7.5f))
+				updateType = CameraUpdateType.NONE;
+			if(newCamPos.x > stage.getMapWidth() - (maincamera.zoom * 10f) && newCamPos.y < 0 + (maincamera.zoom * 7.5f))
+				updateType = CameraUpdateType.NONE;
+			if(newCamPos.x < 0 + (maincamera.zoom * 10f) && newCamPos.y > stage.getMapHeight() - (maincamera.zoom * 7.5f))
+				updateType = CameraUpdateType.NONE;
+			
 			switch(updateType)
 			{
 			case XANDY:
 				maincamera.position.set(
-						new Vector2(oldCamPos.x + -Gdx.input.getDeltaX(), 
-								oldCamPos.y + Gdx.input.getDeltaY()), maincamera.position.z);
+						new Vector2(oldCamPos.x + -(Gdx.input.getDeltaX() / GlobalVariables.TOUCHDRAGDIVIDER), 
+								oldCamPos.y + (Gdx.input.getDeltaY() / GlobalVariables.TOUCHDRAGDIVIDER)), maincamera.position.z);
 			break;
 			case XONLY:
 				maincamera.position.set(
-						new Vector2(oldCamPos.x + -Gdx.input.getDeltaX(), 
+						new Vector2(oldCamPos.x + -(Gdx.input.getDeltaX() / GlobalVariables.TOUCHDRAGDIVIDER), 
 								oldCamPos.y), maincamera.position.z);
 			break;
 			case YONLY:
 				maincamera.position.set(
 						new Vector2(oldCamPos.x, 
-								oldCamPos.y + Gdx.input.getDeltaY()), maincamera.position.z);
-			break;
+								oldCamPos.y + (Gdx.input.getDeltaY() / GlobalVariables.TOUCHDRAGDIVIDER)), maincamera.position.z);
+				break;
+			case NONE:
+				break;
 			}
-			
 			maincamera.update();
+			
+			if(oldCamPos.x != maincamera.position.x)
+			{
+				float changeInX = maincamera.position.x - oldCamPos.x;
+				if(Math.signum(changeInX) == 1.0f) //moving right
+				{
+					Vector3 tempBgOffset = stage.getBackgroundOffset();
+					Vector3 newBgPos = maincamera.position;
+					tempBgOffset.x -= GlobalVariables.BGOFFSET;
+					stage.UpdateBgOffset(tempBgOffset);
+					backgroundcam.position.set(newBgPos);
+					backgroundcam.update();
+				}
+				else if(Math.signum(changeInX) == -1.0f)
+				{
+					Vector3 tempBgOffset = stage.getBackgroundOffset();
+					Vector3 newBgPos = maincamera.position;
+					tempBgOffset.x += GlobalVariables.BGOFFSET;
+					stage.UpdateBgOffset(tempBgOffset);
+					backgroundcam.position.set(newBgPos);
+					backgroundcam.update();
+				}
+			}
+			if(oldCamPos.y != maincamera.position.y)
+			{
+				float changeInY = maincamera.position.y - oldCamPos.y;
+				if(Math.signum(changeInY) == 1.0f) //moving right
+				{
+					Vector3 tempBgOffset = stage.getBackgroundOffset();
+					Vector3 newBgPos = maincamera.position;
+					tempBgOffset.y -= GlobalVariables.BGOFFSET * 2;
+					stage.UpdateBgOffset(tempBgOffset);
+					backgroundcam.position.set(newBgPos);
+					backgroundcam.update();
+				}
+				else if(Math.signum(changeInY) == -1.0f)
+				{
+					Vector3 tempBgOffset = stage.getBackgroundOffset();
+					Vector3 newBgPos = maincamera.position;
+					tempBgOffset.y += GlobalVariables.BGOFFSET * 2;
+					stage.UpdateBgOffset(tempBgOffset);
+					backgroundcam.position.set(newBgPos);
+					backgroundcam.update();
+				}
+			}
 		}
 	}
 	
