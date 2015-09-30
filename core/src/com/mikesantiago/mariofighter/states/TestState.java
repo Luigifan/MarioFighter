@@ -10,6 +10,7 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.mikesantiago.mariofighter.CustomTextListener;
@@ -389,7 +390,19 @@ public class TestState
 		stage.render(sb);
 		sb.begin();
 		sb.setProjectionMatrix(GlobalVariables.hudcam.combined);
-		GlobalVariables.manager.GetFont().draw(sb, Gdx.graphics.getFramesPerSecond() + " FPS", 0, GlobalVariables.V_HEIGHT);
+		stage.getStageRenderer().setProjectionMatrix(GlobalVariables.hudcam.combined);
+		if(stage.getStageRenderer().isDrawing() != true)
+			stage.getStageRenderer().begin();
+		{
+			GlobalVariables.manager.GetFont().draw(stage.getStageRenderer(), Gdx.graphics.getFramesPerSecond() + " FPS", 0, GlobalVariables.V_HEIGHT - 16);
+			if(Gdx.app.getType() == ApplicationType.Desktop)
+			{
+				//Vector2 newMousePos = new Vector2(Gdx.input.getX(), Gdx.input.getY() - Gdx.input.getDeltaX());
+				//stage.getStageRenderer().draw(GlobalVariables.manager.GetTexture("cursor0"), Gdx.input.getX(), Gdx.input.getY(), 32, 32);
+			}
+		}
+		if(stage.getStageRenderer().isDrawing() == true)
+			stage.getStageRenderer().end();
 		sb.setProjectionMatrix(maincamera.combined);
 		
 		sb.end();

@@ -11,11 +11,12 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Graphics.DisplayMode;
 import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector3;
 import com.mikesantiago.mariofighter.assets.AssetManager;
 import com.mikesantiago.mariofighter.states.StateManager;
@@ -32,6 +33,11 @@ public class MainGameClass extends ApplicationAdapter
 		batch = new SpriteBatch();
 		manager = new AssetManager();
 		manager.LoadResource("mario", new Texture(Gdx.files.internal("assets/mariotest.png")));
+		manager.LoadResource("cursor", new Texture(Gdx.files.internal("assets/cursor_main.png")));
+		
+		Pixmap p = new Pixmap(Gdx.files.internal("assets/cursor_main.png"));
+		Gdx.input.setCursorImage(p, 0, 0);
+		
 		stateManager = new StateManager(batch, manager);
 		
 		manager.LoadResource("logo", new Texture(Gdx.files.internal("assets/logo.png")));

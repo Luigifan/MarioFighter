@@ -260,6 +260,7 @@ public class Stage
 	public boolean getAllowedUnlimitedHops(){return allowUnlimitedHops;}
 	public void setAllowUnlimitedHops(boolean a){allowUnlimitedHops = a;}
 	
+	public SpriteBatch getStageRenderer(){return (SpriteBatch) this.tmr.getBatch();}
 	
 	public void render(SpriteBatch sb)
 	{
