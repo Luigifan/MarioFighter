@@ -1,6 +1,7 @@
 package com.mikesantiago.mariofighter;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.mikesantiago.mariofighter.assets.AssetManager;
 import com.mikesantiago.mariofighter.states.StateManager;
@@ -27,4 +28,6 @@ public class GlobalVariables
 	public static OrthographicCamera maincamera;
 	public static OrthographicCamera hudcam;
 	public static OrthographicCamera backgroundcam;
+	
+	public static Pixmap MainCursor, GrabCursor;
 }

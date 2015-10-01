@@ -5,7 +5,7 @@ public class Input
 	public static boolean[] keys; //current
 	public static boolean[] pkeys; //previous
 	
-	public static final int NUM_KEYS = 8; //make sure this is in line with
+	public static final int NUM_KEYS = 9; //make sure this is in line with
 	
 	public static final int MOVE_UP = 0;  //these
 	public static final int MOVE_LEFT = 1;
@@ -17,6 +17,8 @@ public class Input
 	
 	public static final int RESET_POS = 6;
 	public static final int JUMP = 7;
+	
+	public static final int CLICK = 8;
 	
 	static
 	{

@@ -35,8 +35,9 @@ public class MainGameClass extends ApplicationAdapter
 		manager.LoadResource("mario", new Texture(Gdx.files.internal("assets/mariotest.png")));
 		manager.LoadResource("cursor", new Texture(Gdx.files.internal("assets/cursor_main.png")));
 		
-		Pixmap p = new Pixmap(Gdx.files.internal("assets/cursor_main.png"));
-		Gdx.input.setCursorImage(p, 0, 0);
+		GlobalVariables.MainCursor = new Pixmap(Gdx.files.internal("assets/cursor_main.png"));
+		GlobalVariables.GrabCursor = new Pixmap(Gdx.files.internal("assets/cursor_grab.png"));
+		Gdx.input.setCursorImage(GlobalVariables.MainCursor, 0, 0);
 		
 		stateManager = new StateManager(batch, manager);
 		
@@ -46,10 +47,6 @@ public class MainGameClass extends ApplicationAdapter
 		
 		Gdx.input.setInputProcessor(new CustomInputProcessor());
 		
-		for(DisplayMode m : Gdx.graphics.getDisplayModes())
-		{
-			System.out.println(String.format("%s x %s @ %shz %s BBP", m.width, m.height, m.refreshRate, m.bitsPerPixel));
-		}
 	}
 
 	private void SetupCameras()

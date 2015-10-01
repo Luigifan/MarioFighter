@@ -40,6 +40,10 @@ public class CustomInputProcessor extends InputAdapter
 		{
 			Input.setKey(Input.JUMP, true);
 		}
+		if(k == com.badlogic.gdx.Input.Buttons.LEFT)
+		{
+			Input.setKey(Input.CLICK, true);
+		}
 		return true;
 	}
 	public boolean keyUp(int k)
@@ -75,6 +79,10 @@ public class CustomInputProcessor extends InputAdapter
 		if(k == Keys.Z)
 		{
 			Input.setKey(Input.JUMP, false);
+		}
+		if(k == com.badlogic.gdx.Input.Buttons.LEFT)
+		{
+			Input.setKey(Input.CLICK, false);
 		}
 		
 		return true;
